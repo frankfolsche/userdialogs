@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Xamarin.Legacy.Sdk/0.2.0-alpha1">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;xamarin.ios10;monoandroid12.0;net6.0-ios;net6.0-android</TargetFrameworks>
-        <PackageProjectUrl>https://github.com/aritchie/userdialogs</PackageProjectUrl>
+      <TargetFrameworks>netstandard2.0;xamarin.ios10;monoandroid12.0;net6.0-ios;net6.0-android</TargetFrameworks>
+      <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041.0</TargetFrameworks>
+      <PackageProjectUrl>https://github.com/aritchie/userdialogs</PackageProjectUrl>
         <Product>$(AssemblyName) ($(TargetFramework))</Product>
         <Authors>Allan Ritchie</Authors>
         <Description>A cross platform library that allows you to call for standard user dialogs from a shared/portable library. Supports Android, iOS, and UWP</Description>
@@ -17,7 +18,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <IncludeSource>True</IncludeSource>
+      <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net6.0-windows10.0.19041.0</TargetFrameworks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -47,7 +48,10 @@
     <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
         <Compile Include="Platforms\Shared\**\*.cs" />
     </ItemGroup>
-
+    <ItemGroup Condition=" $(TargetFramework.Contains('windows10')) ">
+      <Compile Include="Platforms\Shared\**\*.cs" />
+      <Compile Include="Platforms\Windows\**\*.cs" />
+    </ItemGroup>
     <ItemGroup Condition=" $(TargetFramework.Contains('android')) ">
         <Compile Include="Platforms\Shared\**\*.cs" />
         <Compile Include="Platforms\Android\**\*.cs" />
@@ -60,5 +64,9 @@
         <Compile Include="Platforms\ios\**\*.cs" />
         <Compile Include="Platforms\Apple\**\*.cs" />
         <PackageReference Include="BTProgressHUD" Version="1.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Platforms\Windows\" />
     </ItemGroup>
 </Project>
